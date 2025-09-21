@@ -19,26 +19,15 @@ def setup_driver():
     return driver
 
 def scrape_site(driver, site_info):
-    portal_url = site_info.get("portal_url")
     target_url = site_info["target_url"]
     site_name = site_info["name"]
-    iframe_id = site_info.get("iframe_id")
     selector = site_info["selector"]
 
     print(f"\n✅ {site_name} 크롤링 시작...")
     
     try:
-        if portal_url:
-            print(f"   - 포털 방문: {portal_url}")
-            driver.get(portal_url)
-            time.sleep(2)
-
         print(f"   - 목표 페이지로 이동: {target_url}")
         driver.get(target_url)
-
-        if iframe_id:
-            WebDriverWait(driver, 10).until(EC.frame_to_be_available_and_switch_to_it((By.ID, iframe_id)))
-            print(f"   - '{iframe_id}' iframe으로 전환 완료")
 
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, selector)))
         elements = driver.find_elements(By.CSS_SELECTOR, selector)
@@ -64,8 +53,6 @@ def scrape_site(driver, site_info):
     except Exception as e:
         print(f"   - 🚨 오류: {site_name} 크롤링 중 예측하지 못한 문제가 발생했습니다: {e}")
     finally:
-        if iframe_id:
-            driver.switch_to.default_content()
         print(f"🏁 {site_name} 크롤링 완료.")
 
 
@@ -73,7 +60,7 @@ if __name__ == "__main__":
     lh_info = {
         "name": "LH 청약플러스",
         "target_url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-        "selector": "#sub_cont > div > table > tbody > tr > td.txt_l > a" 
+        "selector": "td.bbs_tit > a"
     }
     
     sh_info = {
